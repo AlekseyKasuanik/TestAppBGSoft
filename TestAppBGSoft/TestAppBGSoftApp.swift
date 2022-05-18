@@ -11,7 +11,7 @@ import SwiftUI
 struct TestAppBGSoftApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            UsersLibraryView().environmentObject(UsersLibrary())
         }
     }
 }
