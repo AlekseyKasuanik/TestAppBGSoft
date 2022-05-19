@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Users {
 let allUsers: [User]
@@ -25,7 +26,7 @@ let allUsers: [User]
 
             users.append(User(
                 imageUrl: "http://dev.bgsoft.biz/task/" + key + ".jpg",
-                photoUrl: photoUrl,
+                photoLinkUrl: photoUrl,
                 userName: userName,
                 userUrl: userUrl,
                 colors: colors
@@ -46,11 +47,23 @@ let allUsers: [User]
 }
 
 
-struct User: Identifiable {
+struct User: Identifiable, Equatable {
+    
     var id = UUID()
     let imageUrl: String
-    let photoUrl: String
+    let photoLinkUrl: String
     let userName: String
     let userUrl: String
     let colors: [String]
+    
+    func openPhotoUrl() {
+        guard let url = URL(string: photoLinkUrl) else {return}
+        UIApplication.shared.open(url)
+    }
+    
+    func openUserUrl() {
+        guard let url = URL(string: userUrl) else {return}
+        UIApplication.shared.open(url)
+        
+    }
 }

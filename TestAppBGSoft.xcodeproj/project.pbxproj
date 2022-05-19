@@ -7,24 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F09818028362E8000C388C9 /* EndlessScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F09817F28362E8000C388C9 /* EndlessScrollView.swift */; };
+		1F09818428366EA600C388C9 /* UIImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F09818328366EA600C388C9 /* UIImageExtensions.swift */; };
+		1F09818628366FB800C388C9 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F09818528366FB800C388C9 /* ArrayExtensions.swift */; };
 		1F93F7222834F81200D1FC48 /* TestAppBGSoftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F7212834F81200D1FC48 /* TestAppBGSoftApp.swift */; };
 		1F93F7242834F81200D1FC48 /* UsersLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F7232834F81200D1FC48 /* UsersLibraryView.swift */; };
 		1F93F7262834F81200D1FC48 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F93F7252834F81200D1FC48 /* Assets.xcassets */; };
 		1F93F7292834F81200D1FC48 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F93F7282834F81200D1FC48 /* Preview Assets.xcassets */; };
 		1F93F7302834F82800D1FC48 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F72F2834F82800D1FC48 /* DataManager.swift */; };
-		1F93F7322834F90200D1FC48 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F7312834F90200D1FC48 /* User.swift */; };
+		1F93F7322834F90200D1FC48 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F7312834F90200D1FC48 /* Users.swift */; };
 		1F93F73428352C9900D1FC48 /*  UsersLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F73328352C9900D1FC48 /*  UsersLibrary.swift */; };
 		1F93F7372835838500D1FC48 /* PersonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F7362835838500D1FC48 /* PersonCardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F09817F28362E8000C388C9 /* EndlessScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndlessScrollView.swift; sourceTree = "<group>"; };
+		1F09818328366EA600C388C9 /* UIImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtensions.swift; sourceTree = "<group>"; };
+		1F09818528366FB800C388C9 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		1F93F71E2834F81200D1FC48 /* TestAppBGSoft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestAppBGSoft.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F93F7212834F81200D1FC48 /* TestAppBGSoftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppBGSoftApp.swift; sourceTree = "<group>"; };
 		1F93F7232834F81200D1FC48 /* UsersLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersLibraryView.swift; sourceTree = "<group>"; };
 		1F93F7252834F81200D1FC48 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1F93F7282834F81200D1FC48 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1F93F72F2834F82800D1FC48 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		1F93F7312834F90200D1FC48 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		1F93F7312834F90200D1FC48 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		1F93F73328352C9900D1FC48 /*  UsersLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = " UsersLibrary.swift"; sourceTree = "<group>"; };
 		1F93F7352835557500D1FC48 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1F93F7362835838500D1FC48 /* PersonCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonCardView.swift; sourceTree = "<group>"; };
@@ -41,6 +47,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F09818128364DD900C388C9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1F93F7362835838500D1FC48 /* PersonCardView.swift */,
+				1F09817F28362E8000C388C9 /* EndlessScrollView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1F09818228366E6400C388C9 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				1F09818328366EA600C388C9 /* UIImageExtensions.swift */,
+				1F09818528366FB800C388C9 /* ArrayExtensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		1F93F7152834F81200D1FC48 = {
 			isa = PBXGroup;
 			children = (
@@ -64,9 +88,10 @@
 				1F93F7212834F81200D1FC48 /* TestAppBGSoftApp.swift */,
 				1F93F7232834F81200D1FC48 /* UsersLibraryView.swift */,
 				1F93F73328352C9900D1FC48 /*  UsersLibrary.swift */,
-				1F93F7362835838500D1FC48 /* PersonCardView.swift */,
+				1F09818128364DD900C388C9 /* Views */,
+				1F09818228366E6400C388C9 /* Extensions */,
 				1F93F72F2834F82800D1FC48 /* DataManager.swift */,
-				1F93F7312834F90200D1FC48 /* User.swift */,
+				1F93F7312834F90200D1FC48 /* Users.swift */,
 				1F93F7252834F81200D1FC48 /* Assets.xcassets */,
 				1F93F7272834F81200D1FC48 /* Preview Content */,
 			);
@@ -151,11 +176,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F93F7322834F90200D1FC48 /* User.swift in Sources */,
+				1F93F7322834F90200D1FC48 /* Users.swift in Sources */,
 				1F93F7372835838500D1FC48 /* PersonCardView.swift in Sources */,
+				1F09818428366EA600C388C9 /* UIImageExtensions.swift in Sources */,
 				1F93F7302834F82800D1FC48 /* DataManager.swift in Sources */,
 				1F93F73428352C9900D1FC48 /*  UsersLibrary.swift in Sources */,
 				1F93F7242834F81200D1FC48 /* UsersLibraryView.swift in Sources */,
+				1F09818028362E8000C388C9 /* EndlessScrollView.swift in Sources */,
+				1F09818628366FB800C388C9 /* ArrayExtensions.swift in Sources */,
 				1F93F7222834F81200D1FC48 /* TestAppBGSoftApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
