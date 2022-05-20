@@ -17,10 +17,10 @@ struct EndlessScrollView: View {
     @State private var draggingXOffset: CGFloat = 0
     @State private var draggingBegan = false
     
-    @State private var offsetDirection: OffsetDirection = .center
-    
     @State private var timer: Timer?
     @State private var tempTranslationWidth: CGFloat = 0
+    
+    @State private var animationAutoscroll = false
     
     var body: some View {
         GeometryReader{geometry in
@@ -57,22 +57,25 @@ struct EndlessScrollView: View {
             .onReceive(library.$needAutoscroll) { isNeedAutoscroll in
                 if isNeedAutoscroll && !animationAutoscroll {
                     startAutoScroll(geometry: geometry.size)
-                    animationAutoscroll = true
                 } else if !isNeedAutoscroll && animationAutoscroll {
-                    animationAutoscroll = false
                     stopAutoScroll()
                 }
             }
-            
+            .onChange(of: geometry.size) { value in
+                xOffset = -geometry.size.width
+                stopAutoscrollAfterRotationScreen(geometry: geometry.size)
+            }
             .offset(x: draggingBegan ? (draggingXOffset + xOffset) : xOffset)
             .highPriorityGesture(DragGesture()
                 .onChanged { value in
-                    dragGestureChanged(translationWidth: value.translation.width + tempTranslationWidth, geometry: geometry.size)
                     library.activityReport()
+                    dragGestureChanged(translationWidth: value.translation.width + tempTranslationWidth, geometry: geometry.size)
+                    
                 }
                 .onEnded { value in
-                    dragGestureEnd(translationWidth: value.translation.width + tempTranslationWidth, geometry: geometry.size)
                     library.activityReport()
+                    dragGestureEnd(translationWidth: value.translation.width + tempTranslationWidth, geometry: geometry.size)
+                    
                 }
             )
         }
@@ -80,25 +83,38 @@ struct EndlessScrollView: View {
     }
     
     private func startAutoScroll(geometry: CGSize) {
+        animationAutoscroll = true
         let step = geometry.width / ViewConstants.autoscrollFrameDuration / ViewConstants.screenHz
+        var timeToNextFrame = ViewConstants.autoscrollPauseTime
         tempTranslationWidth = 0
         timer = Timer.scheduledTimer(withTimeInterval: 1 / ViewConstants.screenHz, repeats: true) {_ in
-            tempTranslationWidth -= step
-            if tempTranslationWidth > -geometry.width {
-            dragGestureChanged(translationWidth: (tempTranslationWidth), geometry: geometry)
+            if timeToNextFrame >= ViewConstants.autoscrollPauseTime {
+                tempTranslationWidth -= step
+                if tempTranslationWidth >= -geometry.width {
+                    withAnimation(.linear) {
+                        dragGestureChanged(translationWidth: (tempTranslationWidth), geometry: geometry)
+                    }
+                } else {
+                    dragGestureEnd(translationWidth: (tempTranslationWidth), geometry: geometry)
+                    timeToNextFrame = 0
+                }
             } else {
-                dragGestureEnd(translationWidth: (tempTranslationWidth), geometry: geometry)
+                timeToNextFrame += 1 / ViewConstants.screenHz
             }
         }
     }
     
+    private func stopAutoscrollAfterRotationScreen(geometry: CGSize) {
+        guard animationAutoscroll else { return }
+        dragGestureEnd(translationWidth: (tempTranslationWidth), geometry: geometry)
+        stopAutoScroll()
+        library.activityReport()
+    }
+
     private func stopAutoScroll() {
-        
+        animationAutoscroll = false
         timer?.invalidate()
     }
-    
-    @State private var animationAutoscroll = false
-    
     
     private func getScrollViewElement(index: Int, geometry: CGSize, localGeometry: CGRect) -> some View {
         ZStack {
@@ -123,41 +139,35 @@ struct EndlessScrollView: View {
     private func dragGestureChanged(translationWidth: CGFloat, geometry: CGSize) {
         if !draggingBegan {
             draggingBegan = true
-            
-            switch offsetDirection {
-                
-            case .left:
-                draggingXOffset = xOffset - geometry.width
-                library.previousUsers()
-                
-            case .right:
-                draggingXOffset = xOffset + geometry.width
-                library.nextUsers()
-            case .center:
-                draggingXOffset = xOffset
-            }
-            
-            xOffset = draggingXOffset
         }
         draggingXOffset = translationWidth
     }
     
     private func dragGestureEnd(translationWidth: CGFloat, geometry: CGSize) {
-        offsetDirection = .center
-        var offset = xOffset
-        if translationWidth > geometry.width * ViewConstants.widthRatioForScroll {
-            offset += geometry.width
-            offsetDirection = .left
-        } else if translationWidth < -geometry.width * ViewConstants.widthRatioForScroll {
-            offset -= geometry.width
-            offsetDirection = .right
+        let widthRatio = animationAutoscroll ? ViewConstants.widthRatioForAutoScroll : ViewConstants.widthRatioForScroll
+        
+        if translationWidth > geometry.width * widthRatio {
+            xOffset -= geometry.width
+            library.previousUsers()
+        } else if translationWidth < -geometry.width * widthRatio{
+            xOffset += geometry.width
+            library.nextUsers()
         }
+        
         tempTranslationWidth = 0
-        withAnimation(.easeOut(duration: ViewConstants.autoscrollAnimationDuration)) {
-            draggingBegan = false
-            xOffset = offset
+    
+        if animationAutoscroll {
+            withAnimation(.linear) {
+                draggingBegan = false
+                xOffset = -geometry.width
+            }
+        } else {
+            withAnimation(.easeOut(duration: ViewConstants.autoscrollAnimationDuration)) {
+                draggingBegan = false
+                xOffset = -geometry.width
+            }
         }
-        print("offsetDirection", offsetDirection)
+
     }
     
     private func getOpacity(localGeometry: CGRect, globalGeometry: CGSize) -> Double {
@@ -175,20 +185,16 @@ struct EndlessScrollView: View {
         return (1 + (abs(localGeometry.midX - globalGeometryMidX) / globalGeometryMidX) * ViewConstants.maxParallaxRatio)
     }
     
-    private enum OffsetDirection {
-        case left
-        case right
-        case center
-    }
-    
     struct ViewConstants {
         static let widthRatioForScroll: CGFloat = 0.2
+        static let widthRatioForAutoScroll: CGFloat = 0.5
         static let autoscrollAnimationDuration: Double = 0.3
         static let alphaBlendModeMaxRatio: Double = 0.15
         static let startImageWidthRatio: Double = 0.9
         static let maxChangeImageWidthRatio: Double = 0.05
         static let maxParallaxRatio: Double = 0.02
         static let autoscrollFrameDuration: Double = 2
+        static let autoscrollPauseTime: Double = 1
         static let screenHz: Double = 60
     }
     

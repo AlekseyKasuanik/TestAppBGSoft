@@ -11,8 +11,8 @@ import SwiftUI
 struct TestAppBGSoftApp: App {
     var body: some Scene {
         WindowGroup {
-            UsersLibraryView().environmentObject(UsersLibrary(with: URL(string: "http://dev.bgsoft.biz/task/credits.json")!))
-            //EndlessScrollView()
+          //  UsersLibraryView().environmentObject(UsersLibrary(with: URL(string: "http://dev.bgsoft.biz/task/credits.json")!))
+            DemoDragRelocateView()
         }
     }
 }

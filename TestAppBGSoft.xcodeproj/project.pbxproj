@@ -18,6 +18,7 @@
 		1F93F7322834F90200D1FC48 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F7312834F90200D1FC48 /* Users.swift */; };
 		1F93F73428352C9900D1FC48 /*  UsersLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F73328352C9900D1FC48 /*  UsersLibrary.swift */; };
 		1F93F7372835838500D1FC48 /* PersonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93F7362835838500D1FC48 /* PersonCardView.swift */; };
+		1FCCAE632837D2840086039B /* testView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCCAE622837D2840086039B /* testView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		1F93F73328352C9900D1FC48 /*  UsersLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = " UsersLibrary.swift"; sourceTree = "<group>"; };
 		1F93F7352835557500D1FC48 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1F93F7362835838500D1FC48 /* PersonCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonCardView.swift; sourceTree = "<group>"; };
+		1FCCAE622837D2840086039B /* testView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 			children = (
 				1F93F7352835557500D1FC48 /* Info.plist */,
 				1F93F7212834F81200D1FC48 /* TestAppBGSoftApp.swift */,
+				1FCCAE622837D2840086039B /* testView.swift */,
 				1F93F7232834F81200D1FC48 /* UsersLibraryView.swift */,
 				1F93F73328352C9900D1FC48 /*  UsersLibrary.swift */,
 				1F09818128364DD900C388C9 /* Views */,
@@ -182,6 +185,7 @@
 				1F93F7302834F82800D1FC48 /* DataManager.swift in Sources */,
 				1F93F73428352C9900D1FC48 /*  UsersLibrary.swift in Sources */,
 				1F93F7242834F81200D1FC48 /* UsersLibraryView.swift in Sources */,
+				1FCCAE632837D2840086039B /* testView.swift in Sources */,
 				1F09818028362E8000C388C9 /* EndlessScrollView.swift in Sources */,
 				1F09818628366FB800C388C9 /* ArrayExtensions.swift in Sources */,
 				1F93F7222834F81200D1FC48 /* TestAppBGSoftApp.swift in Sources */,

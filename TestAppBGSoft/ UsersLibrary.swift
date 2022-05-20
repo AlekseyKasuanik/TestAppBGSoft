@@ -77,7 +77,6 @@ class  UsersLibrary: ObservableObject {
         if CFAbsoluteTimeGetCurrent() - lastUserActivityTime > 5 {
             needAutoscroll = true
         }
-        print("USER",(CFAbsoluteTimeGetCurrent() - lastUserActivityTime))
     }
     
     private func changeScreenUsers() {
@@ -117,6 +116,8 @@ class  UsersLibrary: ObservableObject {
                         }
                         
                     
+                } else {
+                    print("ERROR")
                 }
             }
         }

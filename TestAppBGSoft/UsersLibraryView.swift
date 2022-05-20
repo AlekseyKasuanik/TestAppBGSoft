@@ -10,6 +10,7 @@ import SwiftUI
 struct  UsersLibraryView: View {
     
     @EnvironmentObject var library: UsersLibrary
+
     
     var body: some View {
         GeometryReader {geometry in
