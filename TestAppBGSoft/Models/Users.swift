@@ -8,8 +8,20 @@
 import Foundation
 import SwiftUI
 
-struct Users {
-let allUsers: [User]
+struct Users: Codable {
+    
+    private static let defaultsKey = "Users.defaultsKey"
+    
+    private (set) var  allUsers: [User] {
+        didSet {
+            saveChanges()
+            print("SavingChanges")
+        }
+    }
+    
+    var json: Data? {
+        return try? JSONEncoder().encode(self)
+    }
     
     init?(from data: Data) {
         var users = [User]()
@@ -25,6 +37,7 @@ let allUsers: [User]
             else {return nil}
 
             users.append(User(
+                id: key,
                 imageUrl: "http://dev.bgsoft.biz/task/" + key + ".jpg",
                 photoLinkUrl: photoUrl,
                 userName: userName,
@@ -33,12 +46,38 @@ let allUsers: [User]
             ))
             
         }
-        
         users.sort(by: {$0.userName > $1.userName})
         self.allUsers = users
+        saveChanges()
+
+    
     }
     
-    enum Keys: String {
+    init?() {
+        let defaultsData = UserDefaults.standard.data(forKey: Users.defaultsKey)
+        if defaultsData != nil, let users = try? JSONDecoder().decode(Users.self, from: defaultsData!){
+            self = users
+        } else {
+            return nil
+        }
+    
+    }
+    
+    mutating func deleteUser(_ user: User) {
+        allUsers.removeAll(where: {$0.id == user.id})
+    }
+    
+    mutating func move(fromOffsets:IndexSet,toOffset: Int) {
+        allUsers.move(fromOffsets: fromOffsets, toOffset: toOffset)
+    }
+    
+    
+    
+    private func saveChanges() {
+        UserDefaults.standard.set(json, forKey: Users.defaultsKey)
+    }
+    
+    private enum Keys: String {
         case photoUrl = "photo_url"
         case userName = "user_name"
         case userUrl  = "user_url"
@@ -46,24 +85,3 @@ let allUsers: [User]
     }
 }
 
-
-struct User: Identifiable, Equatable {
-    
-    var id = UUID()
-    let imageUrl: String
-    let photoLinkUrl: String
-    let userName: String
-    let userUrl: String
-    let colors: [String]
-    
-    func openPhotoUrl() {
-        guard let url = URL(string: photoLinkUrl) else {return}
-        UIApplication.shared.open(url)
-    }
-    
-    func openUserUrl() {
-        guard let url = URL(string: userUrl) else {return}
-        UIApplication.shared.open(url)
-        
-    }
-}

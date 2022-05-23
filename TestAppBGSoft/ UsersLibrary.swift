@@ -12,9 +12,15 @@ class  UsersLibrary: ObservableObject {
     
     @Published var screenUsers: [User?] = [nil,nil,nil]
     
-    @Published var preloadedImagesData = [UUID : UIImage]()
+    @Published var preloadedImagesData = [String : UIImage]()
     
     @Published var needAutoscroll = false
+    
+    @Published private var users: Users? {
+        didSet {
+            changeScreenUsers()
+        }
+    }
     
     private var timer: Timer!
     
@@ -22,30 +28,40 @@ class  UsersLibrary: ObservableObject {
     
     private var screenUserIndex = 0
     
-    private var users: Users?
-    
-    private var allUsers: [User] {
+    var allUsers: [User] {
         users?.allUsers ?? []
     }
     
-    
     init(with url: URL) {
-        
-        DataManager.getDataFromURL(url) {data in
-            if let data = data, let users = Users(from: data) {
-                DispatchQueue.main.async {
-                    self.users = users
-                    self.changeScreenUsers()
-                    self.setupTimer()
-                    self.lastUserActivityTime = CFAbsoluteTimeGetCurrent()
+        if let users = Users() {
+            setUsers(users)
+        } else {
+            NetworkManager.getDataFromURL(url) {data in
+                if let data = data, let users = Users(from: data) {
+                    DispatchQueue.main.async {
+                        self.setUsers(users)
+                    }
                 }
             }
         }
     }
     
+    func move(fromOffsets: IndexSet, toOffset: Int) {
+        self.users?.move(fromOffsets: fromOffsets, toOffset: toOffset)
+        nextUsers()
+    }
     
-    func getImageForUserWithID(_ id: UUID) -> UIImage? {
+    func deleteUser(_ user: User) {
+        users?.deleteUser(user)
+    }
+    
+    
+    func getImageForUserWithID(_ id: String) -> UIImage? {
         preloadedImagesData[id]
+    }
+    
+    func getIndexForUserWithID(_ id: String) -> Int {
+        allUsers.firstIndex(where: {$0.id == id}) ?? 0
     }
     
     func nextUsers() {
@@ -63,6 +79,14 @@ class  UsersLibrary: ObservableObject {
         needAutoscroll = false
         }
         lastUserActivityTime = CFAbsoluteTimeGetCurrent()
+    }
+    
+    private func setUsers(_ users: Users) {
+        self.users = users
+        changeScreenUsers()
+        setupTimer()
+        lastUserActivityTime = CFAbsoluteTimeGetCurrent()
+        preloadAllImages()
     }
     
     private func setupTimer() {
@@ -85,7 +109,6 @@ class  UsersLibrary: ObservableObject {
             allUsers[screenUserIndex],
             allUsers[getNextIndexFor(screenUserIndex)],
         ]
-        self.preloadAndScaleScreenImages()
     }
     
     private func getNextIndexFor(_ index: Int) -> Int {
@@ -96,43 +119,50 @@ class  UsersLibrary: ObservableObject {
        index == 0 ? allUsers.count - 1 : index - 1
     }
     
-    private func preloadAndScaleScreenImages() {
+    private func preloadAllImages() {
+        var preloadImagesOrder = self.allUsers
+        preloadImagesOrder.orderedShuffle()
         
-        let users = [
-            allUsers[screenUserIndex],
-            allUsers[getNextIndexFor(screenUserIndex)],
-            allUsers[getPreviousIndexFor(screenUserIndex)],
-            allUsers[getNextIndexFor(getNextIndexFor(screenUserIndex))],
-            allUsers[getPreviousIndexFor(getPreviousIndexFor(screenUserIndex))]
-        ]
-        
-        for user in users {
-            guard preloadedImagesData[user.id] == nil else { continue }
-            guard let url = URL(string: user.imageUrl) else { continue }
-            DataManager.getDataFromURL(url) {data in
-                if let data = data {
-                    DispatchQueue.main.async {
-                        self.preloadedImagesData[user.id] = self.getScaleImage(data)
-                        }
-                        
-                    
+        func autoLoadImages() {
+            guard let first = preloadImagesOrder.first else {return}
+            print("LoadNEXTImage")
+            loadNextImage(user: first) { success in
+                if success {
+                    preloadImagesOrder.removeFirst()
+                    autoLoadImages()
                 } else {
-                    print("ERROR")
+                    print("LoadNEXTImage")
+                    autoLoadImages()
                 }
             }
         }
-    }
-    
-    private func getScaleImage(_ data: Data) -> UIImage? {
-        var image = UIImage(data: data)
-        if image == nil {
-            image = UIImage(named: "defaultPhoto")
-        }
-        let imageScale = min(UIScreen.main.bounds.width / image!.size.width ,
-                             UIScreen.main.bounds.height / image!.size.height )
-        let screenScale = UIScreen.main.scale
-        return image!.resizeWithScale(screenScale * imageScale)
         
+        autoLoadImages()
+        
+
     }
+
+    private func loadNextImage(user: User,_ completionHandler: (@escaping (Bool) -> ())) {
+        guard let url = URL(string: user.imageUrl) else { fatalError("incorrect URL") }
+        ImagesManager.getImage(url: url, id: user.id) { image in
+            if let imageUI = image {
+                DispatchQueue.main.async {
+                self.preloadedImagesData[user.id] = imageUI
+                }
+                print("TRUE", user.id)
+                completionHandler(true)
+                
+            } else {
+                print("FALSE")
+                completionHandler(false)
+                
+            }
+        }
+    }
+        
 }
+
+
+    
+
 

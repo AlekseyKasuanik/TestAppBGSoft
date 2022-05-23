@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DataManager {
+struct NetworkManager {
     
     static func getDataFromURL(_ url: URL,_ completionHandler: (@escaping (Data?) -> ()))  {
         
