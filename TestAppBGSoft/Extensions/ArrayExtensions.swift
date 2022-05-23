@@ -13,7 +13,6 @@ extension Array {
         insert(remove(at: from), at: to)
     }
     
-    
     mutating func orderedShuffle() {
         
         let count = self.count

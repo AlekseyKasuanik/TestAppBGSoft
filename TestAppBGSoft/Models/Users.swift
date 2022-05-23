@@ -15,7 +15,6 @@ struct Users: Codable {
     private (set) var  allUsers: [User] {
         didSet {
             saveChanges()
-            print("SavingChanges")
         }
     }
     
@@ -35,7 +34,7 @@ struct Users: Codable {
                   let userUrl = (names[Keys.userUrl.rawValue] as? String),
                   let colors = names[Keys.colors.rawValue] as? [String]
             else {return nil}
-
+            
             users.append(User(
                 id: key,
                 imageUrl: "http://dev.bgsoft.biz/task/" + key + ".jpg",
@@ -46,11 +45,10 @@ struct Users: Codable {
             ))
             
         }
+        
         users.sort(by: {$0.userName > $1.userName})
         self.allUsers = users
         saveChanges()
-
-    
     }
     
     init?() {
@@ -60,7 +58,6 @@ struct Users: Codable {
         } else {
             return nil
         }
-    
     }
     
     mutating func deleteUser(_ user: User) {
@@ -70,8 +67,6 @@ struct Users: Codable {
     mutating func move(fromOffsets:IndexSet,toOffset: Int) {
         allUsers.move(fromOffsets: fromOffsets, toOffset: toOffset)
     }
-    
-    
     
     private func saveChanges() {
         UserDefaults.standard.set(json, forKey: Users.defaultsKey)

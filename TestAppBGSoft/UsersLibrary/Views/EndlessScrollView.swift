@@ -79,7 +79,7 @@ struct EndlessScrollView: View {
                 }
             )
         }
-                                 
+        
     }
     
     private func startAutoScroll(geometry: CGSize) {
@@ -110,7 +110,7 @@ struct EndlessScrollView: View {
         stopAutoScroll()
         library.activityReport()
     }
-
+    
     private func stopAutoScroll() {
         animationAutoscroll = false
         timer?.invalidate()
@@ -155,7 +155,7 @@ struct EndlessScrollView: View {
         }
         
         tempTranslationWidth = 0
-    
+        
         if animationAutoscroll {
             withAnimation(.linear) {
                 draggingBegan = false
@@ -167,7 +167,7 @@ struct EndlessScrollView: View {
                 xOffset = -geometry.width
             }
         }
-
+        
     }
     
     private func getOpacity(localGeometry: CGRect, globalGeometry: CGSize) -> Double {
@@ -189,12 +189,16 @@ struct EndlessScrollView: View {
         static let widthRatioForScroll: CGFloat = 0.2
         static let widthRatioForAutoScroll: CGFloat = 0.5
         static let autoscrollAnimationDuration: Double = 0.3
+        
         static let alphaBlendModeMaxRatio: Double = 0.15
+        
         static let startImageWidthRatio: Double = 0.9
-        static let maxChangeImageWidthRatio: Double = 0.05
-        static let maxParallaxRatio: Double = 0.02
+        static let maxChangeImageWidthRatio: Double = 0.08
+        
+        static let maxParallaxRatio: Double = 0.04
+        
         static let autoscrollFrameDuration: Double = 2
-        static let autoscrollPauseTime: Double = 1
+        static let autoscrollPauseTime: Double = 2
         static let screenHz: Double = 60
     }
     

@@ -13,17 +13,15 @@ struct ImagesManager {
     
     static func getImage(url: URL, id: String, completionHandler: (@escaping (UIImage?) -> ())) {
         if let data = LocalDataManager.getData(name: id), let image = UIImage(data: data) {
-            print("ImageFromStorage")
             completionHandler(image)
         } else {
             NetworkManager.getDataFromURL(url) {data in
-                    if let data = data, let scaleImage = getScaleImage(data) {
-                      LocalDataManager.saveData(name: id, data: scaleImage.jpegData(compressionQuality: 1)!)
-                        completionHandler(scaleImage)
-                        print("ImageFromInternet")
-                    } else {
-                        completionHandler(nil)
-                    }
+                if let data = data, let scaleImage = getScaleImage(data) {
+                    LocalDataManager.saveData(name: id, data: scaleImage.jpegData(compressionQuality: 1)!)
+                    completionHandler(scaleImage)
+                } else {
+                    completionHandler(nil)
+                }
             }
         }
         

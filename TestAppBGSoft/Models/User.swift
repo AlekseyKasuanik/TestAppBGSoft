@@ -24,6 +24,5 @@ struct User: Identifiable, Equatable, Codable, Hashable {
     func openUserUrl() {
         guard let url = URL(string: userUrl) else {return}
         UIApplication.shared.open(url)
-        
     }
 }

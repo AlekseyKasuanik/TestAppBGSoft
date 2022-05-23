@@ -19,10 +19,9 @@ struct HexColor {
         var hexNormalized = hexColor.trimmingCharacters(in: .whitespacesAndNewlines)
         hexNormalized = hexNormalized.replacingOccurrences(of: "#", with: "")
         
-        // Helpers
         var rgb: UInt64 = 0
         let length = hexNormalized.count
-        // Create Scanner
+        
         Scanner(string: hexNormalized).scanHexInt64(&rgb)
         
         if length == 6 {

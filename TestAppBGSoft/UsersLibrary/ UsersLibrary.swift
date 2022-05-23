@@ -10,17 +10,25 @@ import SwiftUI
 
 class  UsersLibrary: ObservableObject {
     
+    @Published var twoRowsMode = false
+    
     @Published var screenUsers: [User?] = [nil,nil,nil]
     
-    @Published var preloadedImagesData = [String : UIImage]()
+    @Published var preloadedImagesAndGradientsData = [String : (image: UIImage, gradient: CGImage)]()
     
     @Published var needAutoscroll = false
+    
+    @Published var networkError = false
     
     @Published private var users: Users? {
         didSet {
             changeScreenUsers()
         }
     }
+    
+    private var url: URL
+    
+    private var contextMenuIsOpened = false
     
     private var timer: Timer!
     
@@ -33,17 +41,40 @@ class  UsersLibrary: ObservableObject {
     }
     
     init(with url: URL) {
+        self.url = url
         if let users = Users() {
             setUsers(users)
         } else {
-            NetworkManager.getDataFromURL(url) {data in
-                if let data = data, let users = Users(from: data) {
-                    DispatchQueue.main.async {
-                        self.setUsers(users)
-                    }
+            loadUsersFromNetwork()
+        }
+    }
+    
+    func loadUsersFromNetwork() {
+        self.networkError = false
+        NetworkManager.getDataFromURL(url) {data in
+            if let data = data, let users = Users(from: data) {
+                DispatchQueue.main.async {
+                    self.setUsers(users)
                 }
+            } else {
+                self.networkError = true
             }
         }
+    }
+    
+    func openContextMenu() {
+        activityReport()
+        contextMenuIsOpened = true
+    }
+    
+    func closeContextMenu() {
+        activityReport()
+        contextMenuIsOpened = false
+    }
+    
+    func setScreenUser(user: User) {
+        screenUserIndex = getIndexForUserWithID(user.id)
+        changeScreenUsers()
     }
     
     func move(fromOffsets: IndexSet, toOffset: Int) {
@@ -52,12 +83,16 @@ class  UsersLibrary: ObservableObject {
     }
     
     func deleteUser(_ user: User) {
+        LocalDataManager.deleteData(name: user.id)
         users?.deleteUser(user)
     }
     
-    
     func getImageForUserWithID(_ id: String) -> UIImage? {
-        preloadedImagesData[id]
+        preloadedImagesAndGradientsData[id]?.image
+    }
+    
+    func getGradientImageForUserWithID(_ id: String) -> CGImage? {
+        preloadedImagesAndGradientsData[id]?.gradient
     }
     
     func getIndexForUserWithID(_ id: String) -> Int {
@@ -76,7 +111,7 @@ class  UsersLibrary: ObservableObject {
     
     func activityReport() {
         if needAutoscroll {
-        needAutoscroll = false
+            needAutoscroll = false
         }
         lastUserActivityTime = CFAbsoluteTimeGetCurrent()
     }
@@ -97,7 +132,7 @@ class  UsersLibrary: ObservableObject {
     }
     
     private func checkUserActivity() {
-        guard screenUsers != [nil,nil,nil] else { return }
+        guard screenUsers != [nil,nil,nil] && !twoRowsMode && !contextMenuIsOpened else { return }
         if CFAbsoluteTimeGetCurrent() - lastUserActivityTime > 5 {
             needAutoscroll = true
         }
@@ -116,7 +151,7 @@ class  UsersLibrary: ObservableObject {
     }
     
     private func getPreviousIndexFor(_ index: Int) -> Int {
-       index == 0 ? allUsers.count - 1 : index - 1
+        index == 0 ? allUsers.count - 1 : index - 1
     }
     
     private func preloadAllImages() {
@@ -125,13 +160,11 @@ class  UsersLibrary: ObservableObject {
         
         func autoLoadImages() {
             guard let first = preloadImagesOrder.first else {return}
-            print("LoadNEXTImage")
             loadNextImage(user: first) { success in
                 if success {
                     preloadImagesOrder.removeFirst()
                     autoLoadImages()
                 } else {
-                    print("LoadNEXTImage")
                     autoLoadImages()
                 }
             }
@@ -139,30 +172,27 @@ class  UsersLibrary: ObservableObject {
         
         autoLoadImages()
         
-
     }
-
+    
     private func loadNextImage(user: User,_ completionHandler: (@escaping (Bool) -> ())) {
         guard let url = URL(string: user.imageUrl) else { fatalError("incorrect URL") }
         ImagesManager.getImage(url: url, id: user.id) { image in
             if let imageUI = image {
                 DispatchQueue.main.async {
-                self.preloadedImagesData[user.id] = imageUI
+                    self.preloadedImagesAndGradientsData[user.id] = (imageUI, GradientProvider.makeCustomGradientImage(colors: user.colors.map{ HexColor($0)! }))
                 }
-                print("TRUE", user.id)
                 completionHandler(true)
                 
             } else {
-                print("FALSE")
                 completionHandler(false)
                 
             }
         }
     }
-        
+    
 }
 
 
-    
+
 
 

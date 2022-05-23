@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIImage {
-
+    
     func resizeWithScale(_ scale : CGFloat) -> UIImage? {
         let newHeight = self.size.height * scale
         let newWidth = self.size.width * scale
@@ -17,7 +17,7 @@ extension UIImage {
         self.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-
+        
         return newImage
     }
 }
